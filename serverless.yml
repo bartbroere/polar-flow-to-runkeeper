@@ -2,9 +2,12 @@ service: aws-python-scheduled-cron
 
 frameworkVersion: ">=1.2.0 <2.0.0"
 
+plugins:
+- serverless-python-requirements
+
 provider:
   name: aws
-  runtime: python2.7
+  runtime: python3.7
 
 functions:
   cron:
