@@ -1,5 +1,6 @@
 import datetime
 import logging
+from collections import namedtuple
 
 import requests
 
@@ -48,3 +49,11 @@ def run(event, context):
     name = context.function_name
     logger.info("Your cron function " + name + " ran at " + str(current_time))
     # TODO ETL here
+
+
+if __name__ == "__main__":
+    # mimic serverless context with a namedtuple in testing
+    Serverless = namedtuple("Serverless", ['function_name'])
+    context = Serverless(function_name='run')
+    event = ''
+    run(event, context)
