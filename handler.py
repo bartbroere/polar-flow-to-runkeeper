@@ -48,7 +48,18 @@ def run(event, context):
     current_time = datetime.datetime.now().time()
     name = context.function_name
     logger.info("Your cron function " + name + " ran at " + str(current_time))
-    # TODO ETL here
+    flow = PolarFlowClient()
+    flow.login(username, password)
+    runkeeper = RunkeeperClient()
+    runkeeper.login(username, password)
+    activities = flow.get('https://flow.polar.com/training/getCalendarEvents',
+                          params={'start': '29.10.2018',  # TODO get today
+                                  'end': '9.12.2018'}).json()
+    for activity in activities:
+        tcx_export = flow.get(
+            'https://flow.polar.com/api/export/training/tcx/' +
+            str(activity['listItemId']
+        )).raw
 
 
 if __name__ == "__main__":
