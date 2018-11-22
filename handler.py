@@ -2,6 +2,7 @@ import datetime
 import logging
 from collections import namedtuple
 
+import confidence
 import requests
 
 logger = logging.getLogger(__name__)
@@ -12,6 +13,8 @@ class PolarFlowClient:
 
     def __init__(self):
         self.session = requests.Session()
+        self.post = self.session.post
+        self.get = self.session.get
 
     def login(self, username, password):
         self.session.post('https://flow.polar.com/login',
@@ -45,16 +48,20 @@ class RunkeeperClient:
 
 
 def run(event, context):
+    config = confidence.load_name('polarflowtorunkeeper.yaml')
     current_time = datetime.datetime.now().time()
     name = context.function_name
     logger.info("Your cron function " + name + " ran at " + str(current_time))
     flow = PolarFlowClient()
-    flow.login(username, password)
+    flow.login(config.polarflow.username,
+               config.polarflow.password)
     runkeeper = RunkeeperClient()
-    runkeeper.login(username, password)
+    runkeeper.login(config.runkeeper.username,
+                    config.runkeeper.password)
+    year = datetime.datetime.now().year
     activities = flow.get('https://flow.polar.com/training/getCalendarEvents',
-                          params={'start': '29.10.2018',  # TODO get today
-                                  'end': '9.12.2018'}).json()
+                          params={'start': f'01.01.{year}',
+                                  'end': f'31.12.{year}'}).json()
     for activity in activities:
         tcx_export = flow.get(
             'https://flow.polar.com/api/export/training/tcx/' +
