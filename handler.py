@@ -73,7 +73,9 @@ def run(event, context):
         response = runkeeper.post(
             'https://runkeeper.com/trackMultipleFileUpload',
             data={'handleUpload': 'handleUpload'},
-            files={'trackFiles': tcx_export.text})
+            files={'trackFiles': ('test.tcx', tcx_export.text,
+                   'application/octet-stream')}
+        )
 
 
 if __name__ == "__main__":
