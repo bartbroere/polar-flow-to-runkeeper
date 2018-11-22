@@ -60,6 +60,8 @@ def run(event, context):
             'https://flow.polar.com/api/export/training/tcx/' +
             str(activity['listItemId']
         )).raw
+        runkeeper.post('https://runkeeper.com/trackMultipleFileUpload',
+                       files={'handleUpload': tcx_export})
 
 
 if __name__ == "__main__":
