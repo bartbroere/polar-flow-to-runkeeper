@@ -1,22 +1,12 @@
-service: aws-python-scheduled-cron
-
-frameworkVersion: ">=1.2.0 <2.0.0"
-
+service: polar-flow-to-runkeeper  # How the function will be known
+frameworkVersion: ">=1.2.0 <2.0.0"  # Provided by the example ¯\_(ツ)_/¯
 plugins:
-- serverless-python-requirements
-
+  - serverless-python-requirements
 provider:
-  name: aws
-  runtime: python3.7
-
+  name: aws  # I use AWS Lambda in this project
+  runtime: python3.7  # Python >3.6 for the f-strings :-)
 functions:
-  cron:
-    handler: handler.run
+  cron:  # 'cron' is the name of the function, you could list more below
+    handler: handler.run  # Path to the function
     events:
-      # Invoke Lambda function every minute
-      - schedule: rate(1 minute)
-  secondCron:
-    handler: handler.run
-    events:
-      # Invoke Lambda function every 2nd minute from Mon-Fri
-- schedule: cron(0/2 * ? * MON-FRI *)
+      - schedule: rate(8 hours)  # Run every eight hours
