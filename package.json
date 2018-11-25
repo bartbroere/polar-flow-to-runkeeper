@@ -3,5 +3,8 @@
   "version": "2018.11.22",
   "description": "Sync Polar Flow to Runkeeper",
   "author": "Bart Broere",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "serverless-python-requirements": "^4.2.5"
+  }
 }
