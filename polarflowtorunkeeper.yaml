@@ -1,3 +1,5 @@
+mongodb: 'mongodb://user:pass@host:port/database'  # change this
+
 polarflow:
   username: 'emailhere'
   password: 'passwordhere'
