@@ -5,8 +5,9 @@ plugins:
 provider:
   name: aws  # I use AWS Lambda in this project
   runtime: python3.7  # Python >3.6 for the f-strings :-)
+  memorySize: 256 # Overwrite the default memory size. Default is 1024
 functions:
   cron:  # 'cron' is the name of the function, you could list more below
     handler: handler.run  # Path to the function
     events:
-      - schedule: rate(8 hours)  # Run every eight hours
+      - schedule: rate(30 minutes)  # Run every thirty minutes
