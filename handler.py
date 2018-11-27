@@ -1,4 +1,5 @@
 import datetime
+import json
 import logging
 from collections import namedtuple
 
@@ -47,7 +48,7 @@ def run(event, context):
     synced_runs = database['polar-flow-to-runkeeper'][
         'synced-runs'].find_one() or {'synced': []}
     synced_runs = synced_runs['synced']
-    print(synced_runs)
+    logging.info(json.dumps(synced_runs))
     database['polar-flow-to-runkeeper']['synced-runs'].delete_one({})
     logger.info("Function " + name + " runs at " + str(current_time))
     flow = PolarFlowClient()
@@ -60,8 +61,10 @@ def run(event, context):
     activities = flow.get('https://flow.polar.com/training/getCalendarEvents',
                           params={'start': f'01.01.{year}',
                                   'end': f'31.12.{year}'}).json()
-    activities = filter(lambda x: x['listItemId'] not in synced_runs,
-                        activities)
+    logging.info(f'{len(activities)} retrieved from Polar Flow')
+    activities = list(filter(lambda x: x['listItemId'] not in synced_runs,
+                             activities))
+    logging.info(f'{len(activities)} not yet in Runkeeper')
     for activity in activities:
         tcx_export = flow.get(
             'https://flow.polar.com/api/export/training/tcx/' +
@@ -73,7 +76,7 @@ def run(event, context):
             files={'trackFiles': ('import.tcx', tcx_export.text,
                                   'application/octet-stream')}
         )
-        logger.info(response.text)
+        logger.info(f'{str(activity["listItemId"])} returned {response.text}')
         synced_runs.append(activity['listItemId'])
     database['polar-flow-to-runkeeper']['synced-runs'].insert_one(
         {'synced': synced_runs}
