@@ -49,7 +49,6 @@ def run(event, context):
         'synced-runs'].find_one() or {'synced': []}
     synced_runs = synced_runs['synced']
     logging.info(json.dumps(synced_runs))
-    database['polar-flow-to-runkeeper']['synced-runs'].delete_one({})
     logger.info("Function " + name + " runs at " + str(current_time))
     flow = PolarFlowClient()
     flow.login(config.polarflow.username,
@@ -78,9 +77,10 @@ def run(event, context):
         )
         logger.info(f'{str(activity["listItemId"])} returned {response.text}')
         synced_runs.append(activity['listItemId'])
-    database['polar-flow-to-runkeeper']['synced-runs'].insert_one(
-        {'synced': synced_runs}
-    )
+        database['polar-flow-to-runkeeper']['synced-runs'].delete_one({})
+        database['polar-flow-to-runkeeper']['synced-runs'].insert_one(
+            {'synced': synced_runs}
+        )
 
 
 if __name__ == "__main__":
